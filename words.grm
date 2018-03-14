@@ -1,0 +1,30 @@
+export dishes = Optimize[ "zup"     |
+       	      		  "mięs"    |
+			  "schab"   |
+			  "devo"    |
+			  "żur"     |
+			  "flacz"   |
+			  "flak"    |
+			  "keba"    |
+			  "mielo"   |
+			  "sznycl"  |
+			  "batat"   |
+			  "naleśnik"|
+			  "gzik"    |
+			  "rolad"   |
+			  "dani"    |
+			  "gotowa"  |
+			  "wla"     ];
+
+export machine = Optimize["gaz"     |
+       	       	          "rower"   |
+			  "hamul"   |
+			  "rotor"   |
+			  "motor"   |
+			  "burk"    |
+			  "urządz"  |
+			  "samoch"  |
+			  "pojazd"  |
+			  "stań"    |
+			  "stać"    |
+			  "fitness" ]; 

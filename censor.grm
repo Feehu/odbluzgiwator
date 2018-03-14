@@ -1,0 +1,74 @@
+import 'alphabet.grm' as alphabet;
+import 'words.grm' as special_words;
+
+censor = Optimize[CDRewrite[ (("ch"|"Ch") ("u" | "ó" | "oo") ("j" | "y") : "ch*j") | (("h"|"H") ("u" | "ó" | "oo") ("j" | "y") : "h*j") | 
+       	 		     (("c" | "C") "ip" : "c*p") | 
+			     (("d"|"D") ("u" | "ó" | "oo") "p" : "d**") | 
+			     (("g"|"G") "ówn" : "gó**" ) |
+			     (("g" | "G") "gówien" : "g****n") |
+			     (("J" | "j") "eb" : "j**") |
+ 			     (("k" | "q" | "K" | "Q") ("u" | "ó" | "oo" | "") "rw" : "k**w") | 
+			     (("k" | "q" | "K" | "Q") ("u" | "ó" | "oo") "rew" : "k***w") | 
+			     (("k" | "q" | "K" | "Q") ("u" | "ó" | "oo") "restw" : "k***stw") |
+			     (("k" | "q" | "K" | "Q") ("u" | "ó" | "oo") "tas" : "k***s") |
+			     (("s" | "S") "ra" : "s*a") | ("sry" : "s*y") |
+			     (("p" | "P") "ierdol"| "pierdal" : "pie***l") |
+			     (("p" | "P") "ieprz" : "p***rz") |
+			     (("s" | "S") "ukinsyn": "suk****n") |
+			     (("p" | "P") "izd" | "piźd" : "p**d") |
+			     (("r" | "R") "ucha" : "r***a") |
+			     (("p" | "P") "eda" ("ł" | "l") : "p***") |
+			     (("z" | "Z") "dzir" : "zdz***") |
+			     (("c" | "C") "iul" : "c**l") |
+			     (("p" | "P") "icz" : "p*cz") |
+			     (("s" | "S") "zczać" : "sz***ć") |
+			     (("c" | "C") "iot" : "c**t") |
+			     (("d" | "D") "ziwk" : "dz**k") |
+			     (("d" | "D") "ziwc" : "dz**c"),
+			     alphabet.allChars | "[BOS]", alphabet.allChars | "[EOS]", alphabet.allChars*]];
+
+censor_phrase = Optimize[CDRewrite[ ("konia" : "k***a")  | ("kapucyn" : "k*****n"), "walić " | "trzepać ", "", alphabet.allChars*]];
+
+decensor_chuj = Optimize[CDRewrite[("ch*j" : "chuj") | ("h*j" : "huj") , 
+	      		            "bli" | "ce" | "ra" | "sza" | "wdy" | "kożu" | "ma" | "dmu" | "wą" | "ko" | "leniu" |
+				    "abstra" | "ekstra" | "kontra", 
+				    alphabet.allChars | "[EOS]", alphabet.allChars*]];
+
+decensor_cip = Optimize[CDRewrite["c*p" : "cip", "in" | "prin" | "wier" | "parti", "" , alphabet.allChars*]];
+
+decensor_pieprz = Optimize[CDRewrite["p***rz" : "pieprz", "" , "ojad" | "niej" | "nik" | "ów" | "ow" | "nic", alphabet.allChars*]]; 
+
+decensor_rucha = Optimize[CDRewrite["r***a" : "rucha", "dob" | "g" | "u", "", alphabet.allChars*]];
+
+decensor_picz = Optimize[CDRewrite["p*cz" : "picz", "s" | "sz" | "ty" | "tro" | "kar" | "sko" | "e" | "hi" | "cyklo", "", alphabet.allChars*]];
+
+decensor_ciot = Optimize[CDRewrite["c**t" : "ciot", "", "omow" | "wórca" | "rup" | "u" | "k" | "c" | "ek" | "ecz" | "ysię", alphabet.allChars*]];
+
+decensor_dup = Optimize[CDRewrite[("d**" : "dup"), "" | "kur" , "lika" | "leks" | "lice" | "erele" | "ad" | "el", alphabet.allChars*]];
+
+decensor_szcza = Optimize[CDRewrite[("sz***ć" : "szczać"), 
+	       	 	             "i" | "pu" | "ga" | "gę" | "ge" | "ta" | "łu" | "ni" | "ma" | "czy" | "du" | "pie" | "pol" | "ła" | "tre" | "mie"
+				     , "", alphabet.allChars*]];
+
+decensor_sentence_t1 = Optimize[CDRewrite["p***rz" : "pieprz", "" , alphabet.allChars* special_words.dishes, alphabet.allChars*]];
+decensor_sentence_t2 = Optimize[CDRewrite["p***rz" : "pieprz", 
+		    		          special_words.dishes alphabet.allChars* ,
+				          "" | alphabet.allChars* special_words.dishes , alphabet.allChars*]];
+
+decensor_sentence_t3 = Optimize[CDRewrite["p***" : "pedał", "" , alphabet.allChars* special_words.machine, alphabet.allChars*]];
+decensor_sentence_t4 = Optimize[CDRewrite["p***" : "pedał",
+                                          special_words.machine alphabet.allChars* ,
+                                          "" | alphabet.allChars* special_words.machine , alphabet.allChars*]];
+
+export PROCESS = Optimize[censor @ censor_phrase @ decensor_chuj
+                                                 @ decensor_cip
+                                                 @ decensor_pieprz
+                                                 @ decensor_rucha
+                                                 @ decensor_picz
+                                                 @ decensor_ciot
+						 @ decensor_dup
+						 @ decensor_szcza
+						 @ decensor_sentence_t1
+						 @ decensor_sentence_t2
+						 @ decensor_sentence_t3
+						 @ decensor_sentence_t4 ];
